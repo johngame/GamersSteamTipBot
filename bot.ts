@@ -36,12 +36,21 @@ credentials.rpc.password = rawCredentials.rpc.password;
 // Connect to Gamerscoin daemon
 gamerscoin.auth(credentials.rpc.username, credentials.rpc.password);
 
-var DogeTipGroupID: string = "103582791435182182";
-var donationAddress: string = "D7uWLJKtS5pypUDiHjRj8LUgn9oPHrzv7b";
-var purgeTime: number = 6; // Hours until tips to nonregistered users are refunded
-var version = "v2.0.2";
+// Steam GroupID
+var GamersTipGroupID: string = "103582791435182182";
 
-MongoClient.connect("mongodb://localhost:27017/dogebot", function(err: any, db: mongodb.Db) {
+// GamersCoin Well Foundation address for The Water Project 
+// More Infos : http://gamers-coin.org/foundation
+var donationAddress: string = "GamenzL8ULFz1yBFykLrja7F5DL5zjCyYC";
+
+// Hours until tips to nonregistered users are refunded
+var purgeTime: number = 6; 
+
+// Bot Version 
+var version = "v0.0.2";
+
+// Connect to MongoDB
+MongoClient.connect("mongodb://localhost:27017/gamerscointipbot", function(err: any, db: mongodb.Db) {
 if (err)
 	throw err
 var Collections: {
@@ -67,8 +76,8 @@ bot.on("loggedOn", function(): void {
 	bot.setPersonaState(Steam.EPersonaState.Online) // to display your bot's status as "Online"
 	console.log("SteamID: " + bot.steamID);
 	
-	bot.joinChat(DogeTipGroupID);
-	//bot.sendMessage(DogeTipGroupID, "dogetippingbot is back online");
+	bot.joinChat(GamersTipGroupID);
+	//bot.sendMessage(GamersTipGroupID, "dogetippingbot is back online");
 
 	unClaimedTipCheck();
 	setInterval(unClaimedTipCheck, 1000 * 60 * 60); // Check every hour
@@ -162,12 +171,12 @@ bot.on("webSessionID", function(): void {
 });
 
 function meCommand(chatterID: string, message: string, group: boolean = true) {
-	var toSend: string = (group) ? DogeTipGroupID : chatterID;
+	var toSend: string = (group) ? GamersTipGroupID : chatterID;
 	bot.sendMessage(toSend, bot.users[chatterID].playerName);
 	bot.sendMessage(toSend, chatterID);
 }
 function statsCommand(chatterID: string, message: string, group: boolean = true) {
-	var toSend: string = (group) ? DogeTipGroupID : chatterID;
+	var toSend: string = (group) ? GamersTipGroupID : chatterID;
 	async.parallel([
 		function(callback) {
 			Collections.Users.find().toArray(callback);
@@ -197,7 +206,7 @@ function statsCommand(chatterID: string, message: string, group: boolean = true)
 	});
 }
 function priceCommand(chatterID: string, message: string, group: boolean = true) {
-	var toSend: string = (group) ? DogeTipGroupID : chatterID;
+	var toSend: string = (group) ? GamersTipGroupID : chatterID;
 	var priceMessage: string[] = [
 		"Exchange rates as of " + new Date(prices.LastUpdated).toString() + ":",
 		"BTC/USD: $" + prices["BTC/USD"].toFixed(2) + " (Coinbase)",
@@ -221,7 +230,7 @@ function inviteToGroup(invitee) {
 			"type": "groupInvite",
 			"inviter": bot.steamID,
 			"invitee": invitee,
-			"group": DogeTipGroupID, // Gamerscoin group
+			"group": GamersTipGroupID, // Gamerscoin group
 			"sessionID": (/sessionid=(.*)/).exec(steamCookies[0])[1]
 		}}, function (err, httpResponse, body) {
 			Collections.Errors.insert({
@@ -254,10 +263,10 @@ bot.on("chatMsg", function(sourceID: string, message: string, type: number, chat
 			case "+joinmatch":
 			case "+joingame":
 			case "+joinserver":
-				bot.sendMessage(DogeTipGroupID, "Our TF2 server is at steam://connect/80.240.134.134:27015/ Click to join and place wagers on matches!");
+				bot.sendMessage(GamersTipGroupID, "Our TF2 server is at steam://connect/80.240.134.134:27015/ Click to join and place wagers on matches!");
 				break;
 			default:
-				bot.sendMessage(DogeTipGroupID, "I won't respond to commands in the group chat. Open up a private message by double clicking on my name in the sidebar to send me commands.");
+				bot.sendMessage(GamersTipGroupID, "I won't respond to commands in the group chat. Open up a private message by double clicking on my name in the sidebar to send me commands.");
     	}
   	}
 });
@@ -635,7 +644,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 							"USD": donationAmount * prices["DOGE/USD"],
 							"timestamp": Date.now(),
 							"time": new Date().toString(),
-							"groupID": DogeTipGroupID,
+							"groupID": GamersTipGroupID,
 						}, {w:1}, function(err): void {
 							if (err) {
 								err.txid = txid;
@@ -855,7 +864,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 									return;
 								}
 								if (/\+verify/i.test(message))
-									bot.sendMessage(DogeTipGroupID, personToTipName + " was tipped " + amount + " Gamerscoins by " + user.name + "!");
+									bot.sendMessage(GamersTipGroupID, personToTipName + " was tipped " + amount + " Gamerscoins by " + user.name + "!");
 								// Add the tip to the database
 								Collections.Tips.insert({
 									"sender": {
@@ -870,7 +879,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 									"USD": amount * prices["DOGE/USD"],
 									"timestamp": Date.now(),
 									"time": new Date().toString(),
-									"groupID": DogeTipGroupID,
+									"groupID": GamersTipGroupID,
 									"unregisteredUser": unregisteredUser,
 									"accepted": !unregisteredUser,
 									"refunded": false
@@ -992,7 +1001,7 @@ bot.on("user", function(userInfo): void {
 		// Pending tip recipient stuff
 		Collections.Tips.findOne({"recipient.id": userInfo.friendid, "accepted": false, "refunded": false}, function(err: Error, tip: any) {
 			if (err) {
-				bot.sendMessage(DogeTipGroupID, reportError(err, "Retrieving tip in friend accept handler"));
+				bot.sendMessage(GamersTipGroupID, reportError(err, "Retrieving tip in friend accept handler"));
 				return;
 			}
 			if (!user || !tip)
