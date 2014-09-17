@@ -27,12 +27,12 @@ var credentials: {
 	};
 } = {steam: {}, rpc: {}};
 var rawCredentials = JSON.parse(fs.readFileSync("auth.json", {"encoding": "utf8"}));
-credentials.steam.accountName = rawCredentials["credentials.steam.accountName"];
-credentials.steam.password = rawCredentials["credentials.steam.password"];
+credentials.steam.accountName = rawCredentials.steam.accountName;
+credentials.steam.password = rawCredentials.steam.password;
 //credentials.steam.shaSentryfile = new Buffer(rawCredentials.steam.shaSentryfile, "hex");
-credentials.rpc.username = ["rawCredentials.rpc.username"];
-credentials.rpc.password = ["rawCredentials.rpc.password"];
-
+credentials.rpc.username = rawCredentials.rpc.username;
+credentials.rpc.password = rawCredentials.rpc.password;
+ 
 // Connect to Gamerscoin daemon
 gamerscoin.auth(credentials.rpc.username, credentials.rpc.password);
 
