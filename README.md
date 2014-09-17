@@ -32,7 +32,7 @@ If +verify is added, the bot will send a message confirming the tip to the group
     
     GamersTippingBot by Ryan Petschek (RazeTheRoof) <petschekr@gmail.com>
     
-    Donate Gamerscoins to Ryan : Coming Soon
+    Donate Gamerscoins to Ryan : GebvwKXVPxj9KVjqQsHP3jvHKR1ZzNnaTe
 
 	
 All contributors are welcome!!! :
