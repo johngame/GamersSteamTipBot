@@ -10,10 +10,10 @@
     "node-gamerscoin": "*",
     "crypto": "*",
     "mongodb": "*",
-	"typescript-compiler": "*",
-	"async": "*",
-	"cheerio": "*",
-	"numeral": "*",
-	"request": "*"
+    "typescript-compiler": "*",
+    "async": "*",
+    "cheerio": "*",
+    "numeral": "*",
+    "request": "*"
   }
 }
