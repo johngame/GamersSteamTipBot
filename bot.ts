@@ -9,7 +9,7 @@ var fs = require("fs");
 var crypto = require("crypto");
 var MongoClient = require("mongodb").MongoClient;
 var Steam = require("steam");
-var dogecoin = require("node-dogecoin")()
+var gamerscoin = require("node-gamerscoin")()
 var async = require("async");
 var cheerio = require("cheerio");
 var numeral = require("numeral");
@@ -33,8 +33,8 @@ credentials.steam.shaSentryfile = new Buffer(rawCredentials.steam.shaSentryfile,
 credentials.rpc.username = rawCredentials.rpc.username;
 credentials.rpc.password = rawCredentials.rpc.password;
 
-// Connect to Dogecoin daemon
-dogecoin.auth(credentials.rpc.username, credentials.rpc.password);
+// Connect to Gamerscoin daemon
+gamerscoin.auth(credentials.rpc.username, credentials.rpc.password);
 
 var DogeTipGroupID: string = "103582791435182182";
 var donationAddress: string = "D7uWLJKtS5pypUDiHjRj8LUgn9oPHrzv7b";
@@ -191,7 +191,7 @@ function statsCommand(chatterID: string, message: string, group: boolean = true)
 				"Stats current as of " + new Date().toString(),
 				"Registered users: " + users.length,
 				"Total tips: " + tips.length,
-				"Total tip volume: " + totalAmount + " DOGE"
+				"Total tip volume: " + totalAmount + " Gamerscoins"
 			].join("\n");
 		bot.sendMessage(toSend, statsMessage);
 	});
@@ -208,7 +208,7 @@ function priceCommand(chatterID: string, message: string, group: boolean = true)
 	if (message.split(" ")[1]) {
 		var amount: number = numeral().unformat(message.split(" ")[1]);
 		var amountUSD: number = amount * prices["DOGE/USD"];
-		priceMessage.push(amount + " DOGE = " + numeral(amountUSD).format("$0,0.00"));
+		priceMessage.push(amount + " Gamerscoins = " + numeral(amountUSD).format("$0,0.00"));
 	}
 	bot.sendMessage(toSend, priceMessage.join("\n"));
 }
@@ -221,7 +221,7 @@ function inviteToGroup(invitee) {
 			"type": "groupInvite",
 			"inviter": bot.steamID,
 			"invitee": invitee,
-			"group": DogeTipGroupID, // Dogecoin group
+			"group": DogeTipGroupID, // Gamerscoin group
 			"sessionID": (/sessionid=(.*)/).exec(steamCookies[0])[1]
 		}}, function (err, httpResponse, body) {
 			Collections.Errors.insert({
@@ -279,7 +279,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					return;
 				}
 
-				dogecoin.getNewAddress(chatterID, function(err: Error, address: string) { // chatterID is that user's account
+				gamerscoin.getNewAddress(chatterID, function(err: Error, address: string) { // chatterID is that user's account
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "Generating address for new user"));
 						return;
@@ -312,12 +312,12 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 									"refund": false,
 									"USD": oldUser.funds * prices["DOGE/USD"]
 								};
-								dogecoin.move("OldUsersPool", chatterID, oldUser.funds, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
+								gamerscoin.move("OldUsersPool", chatterID, oldUser.funds, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
 									if (err) {
 										bot.sendMessage(chatterID, reportError(err, "Moving balance for old user"));
 										return;
 									}
-									bot.sendMessage(chatterID, "Hey " + name + ", " + oldUser.funds + " DOGE has been added to your account from your v1 wallet.");
+									bot.sendMessage(chatterID, "Hey " + name + ", " + oldUser.funds + " Gamerscoins has been added to your account from your v1 wallet.");
 								});
 							}
 						});
@@ -331,12 +331,12 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								"refund": false,
 								"USD": amountToGive * prices["DOGE/USD"]
 							};
-							dogecoin.move(giveawayInfo.account, chatterID, amountToGive, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
+							gamerscoin.move(giveawayInfo.account, chatterID, amountToGive, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
 								if (err) {
 									bot.sendMessage(chatterID, reportError(err, "Moving balance for a giveaway"));
 									return;
 								}
-								bot.sendMessage(chatterID, "As part of the current giveaway, you've been given " + amountToGive + " DOGE! You can use that DOGE to tip others on Steam and help spread the word!");
+								bot.sendMessage(chatterID, "As part of the current giveaway, you've been given " + amountToGive + " DOGE! You can use that Gamerscoins to tip others on Steam and help spread the word!");
 							});
 						}
 					});
@@ -368,12 +368,12 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					bot.sendMessage(chatterID, "You must be registered to view your balance");
 					return;
 				}
-				dogecoin.getBalance(chatterID, function(err: Error, balance: number) {
+				gamerscoin.getBalance(chatterID, function(err: Error, balance: number) {
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "Retrieving user balance in +balance"));
 						return;
 					}
-					bot.sendMessage(chatterID, "Your current balance is: " + balance + " DOGE");
+					bot.sendMessage(chatterID, "Your current balance is: " + balance + " Gamerscoins");
 					bot.sendMessage(chatterID, "Your deposit address is: " + user.address);
 				});
 			});
@@ -391,11 +391,11 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 				var numberOfTransactions: number = 10;
 				async.parallel([
 					function(callback) {
-						dogecoin.getBalance(chatterID, callback);
+						gamerscoin.getBalance(chatterID, callback);
 					},
 					function(callback) {
 						// Get 20 most recent transactions because moves from the FeePool also count and must be expunged
-						dogecoin.listTransactions(chatterID, numberOfTransactions * 2, callback);
+						gamerscoin.listTransactions(chatterID, numberOfTransactions * 2, callback);
 					}
 				], function(err: any, results: any) {
 					if (err) {
@@ -415,7 +415,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					// Restrict to 10 transactions
 					transactions.splice(numberOfTransactions, transactions.length);
 					var message: string = "\n" + user.name + ", here are your last 10 transactions:\n";
-					message += "Your current balance is: " + balance + " DOGE\n";
+					message += "Your current balance is: " + balance + " Gamerscoins\n";
 					message += "Your deposit address is: " + user.address + "\n";
 					for (var i: number = 0; i < transactions.length; i++) {
 						var transaction: any = transactions[i];
@@ -460,7 +460,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								message += "\n\tType: deposit, Amount: " + transaction.amount + ", Confirmations: " + transaction.confirmations;
 								break;
 						}
-						var time: Date = new Date(transaction.time * 1000); // Dogecoind returns a time that is missing the last 3 digits so multiplying by 1000 fixes this
+						var time: Date = new Date(transaction.time * 1000); // Gamerscoind returns a time that is missing the last 3 digits so multiplying by 1000 fixes this
 						message += ", Date: " + time.toDateString() + " (EST)";
 					}
 					bot.sendMessage(chatterID, message);
@@ -474,10 +474,10 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					return;
 				}
 				if (!user) {
-					bot.sendMessage(chatterID, "You must be registered to withdraw your DOGE");
+					bot.sendMessage(chatterID, "You must be registered to withdraw your Gamerscoins");
 					return;
 				}
-				dogecoin.getBalance(chatterID, function(err: Error, balance: number) {
+				gamerscoin.getBalance(chatterID, function(err: Error, balance: number) {
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "Retrieving user balance in +withdraw"));
 						return;
@@ -502,12 +502,12 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 						sendAmount = numeral().unformat(rawAmount);
 					}
 					if (sendAmount < 1) {
-						bot.sendMessage(chatterID, "Invalid amount of DOGE to withdraw");
+						bot.sendMessage(chatterID, "Invalid amount of Gamerscoins to withdraw");
 						return;
 					}
 
-					dogecoin.sendFrom(chatterID, sendToAddress, sendAmount, function(err: any, txid: string) {
-						// Full list of errors at https://github.com/dogecoin/dogecoin/blob/master/src/rpcprotocol.h#L43
+					gamerscoin.sendFrom(chatterID, sendToAddress, sendAmount, function(err: any, txid: string) {
+						// Full list of errors at https://github.com/gamerscoin/gamerscoin/blob/master/src/rpcprotocol.h#L43
 						if (err) {
 							if (err.code === -5) {
 								bot.sendMessage(chatterID, "Invalid withdrawal address");
@@ -518,32 +518,32 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								bot.sendMessage(chatterID, "Sorry, the server doesn't have enough funds currently to complete that request. Most of the server's funds are kept offline in cold wallets to increase security. This bot's maintainer (RazeTheRoof) has been notified of the server's insufficient balance. He will fix this shortly. If this problem persists, please don't hesitate to email him at <petschekr@gmail.com>.");
 							}
 							else if (err.code === -6) {
-								bot.sendMessage(chatterID, "You have insufficient funds to withdraw " + sendAmount + " DOGE");
-								bot.sendMessage(chatterID, "Your current balance is: " + balance + " DOGE");
+								bot.sendMessage(chatterID, "You have insufficient funds to withdraw " + sendAmount + " Gamerscoins");
+								bot.sendMessage(chatterID, "Your current balance is: " + balance + " Gamerscoins");
 							}
 							else {
 								bot.sendMessage(chatterID, reportError({code: err.code, id: chatterID, address: sendToAddress, amount: sendAmount}, "Withdrawing funds"));
 							}
 							return;
 						}
-						bot.sendMessage(chatterID, "Sent " + sendAmount + " DOGE to " + sendToAddress + " in tx " + txid);
+						bot.sendMessage(chatterID, "Sent " + sendAmount + " Gamerscoins to " + sendToAddress + " in tx " + txid);
 						// Reimburse the user for their transaction fee
-						dogecoin.getTransaction(txid, function(err: any, txInfo: any) {
+						gamerscoin.getTransaction(txid, function(err: any, txInfo: any) {
 							if (err) {
 								bot.sendMessage(chatterID, reportError(err, "Retrieving tx info in +withdraw"));
 								return;
 							}
 							var fee: number = Math.abs(txInfo.fee);
 							if (fee === 0) {
-								bot.sendMessage(chatterID, "The transaction fee was 0 DOGE");
+								bot.sendMessage(chatterID, "The transaction fee was 0 Gamerscoins");
 								return;
 							}
-							dogecoin.move("FeePool", chatterID, fee, function(err: any, success: boolean) {
+							gamerscoin.move("FeePool", chatterID, fee, function(err: any, success: boolean) {
 								if (err) {
 									bot.sendMessage(chatterID, reportError(err, "Reimbursing the user for their transaction fee"));
 									return;
 								}
-								bot.sendMessage(chatterID, "The transaction fee of " + fee + " DOGE has been reimbursed");
+								bot.sendMessage(chatterID, "The transaction fee of " + fee + " Gamerscoins has been reimbursed");
 							});
 						});
 					});
@@ -554,16 +554,16 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 			var helpMessage: string = 
 				[
 					"Hello there. I'm dogetippingbot.",
-					"New to Dogecoin? Visit the official page: http://www.dogecoin.com",
+					"New to Gamerscoin? Visit the official page: http://www.gamerscoin.com",
 					"",
 					"Commands:",
 					"	+register - Notify the bot that you exist. You will be added to the database and will receive a deposit address",
 					"	+deposit - View your deposit address",
-					"	+balance - Check the amount of DOGE in your account",
+					"	+balance - Check the amount of Gamerscoins in your account",
 					"	+history - Display your current balance and a list of your 10 most recent transactions",
-					"	+withdraw <ADDRESS> <AMOUNT|all> doge - Withdraw funds in your account to the specified address (the 1 DOGE transaction fee will be covered by the bot)",
+					"	+withdraw <ADDRESS> <AMOUNT|all> doge - Withdraw funds in your account to the specified address (the 1 Gamerscoins transaction fee will be covered by the bot)",
 					"	+tip <STEAM NAME|COMMUNITY URL> <AMOUNT|all> doge [+verify] - Send a Steam user a tip. To send tips to users that aren't registered with the bot, tip to their profile URL. (More details about tipping available at http://steamdogebot.com/ ) If +verify is added, the bot will send a message confirming the tip to the group chat.",
-					"	+donate <AMOUNT|all> doge - Donate doge to the developer to keep the bot alive. The server costs about 17,000 DOGE a month. Any help is greatly appreciated!",
+					"	+donate <AMOUNT|all> doge - Donate doge to the developer to keep the bot alive. The server costs about 17,000 Gamerscoins a month. Any help is greatly appreciated!",
 					"	+version - Current bot version",
 					"	+help - This help dialog",
 					"",
@@ -583,10 +583,10 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					return;
 				}
 				if (!user) {
-					bot.sendMessage(chatterID, "You must be registered to donate with your tipping account. You can also send some DOGE over to " + donationAddress);
+					bot.sendMessage(chatterID, "You must be registered to donate with your tipping account. You can also send some Gamerscoins over to " + donationAddress);
 					return;
 				}
-				dogecoin.getBalance(chatterID, function(err: any, balance: number) {
+				gamerscoin.getBalance(chatterID, function(err: any, balance: number) {
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "Retrieving user balance in +donate"));
 						return;
@@ -605,10 +605,10 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 						donationAmount = numeral().unformat(rawDonationAmount);
 					}
 					if (donationAmount < 1) {
-						bot.sendMessage(chatterID, "Invalid amount of DOGE to donate");
+						bot.sendMessage(chatterID, "Invalid amount of Gamerscoins to donate");
 						return;
 					}
-					dogecoin.sendFrom(chatterID, donationAddress, donationAmount, function(err: any, txid: string) {
+					gamerscoin.sendFrom(chatterID, donationAddress, donationAmount, function(err: any, txid: string) {
 						if (err) {
 							if (err.code === -4) {
 								// Wallet probably doesn't have enough funds
@@ -616,15 +616,15 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								bot.sendMessage(chatterID, "Sorry, the server doesn't have enough funds currently to complete that request. Most of the server's funds are kept offline in cold wallets to increase security. This bot's maintainer (RazeTheRoof) has been notified of the server's insufficient balance. He will fix this shortly. If this problem persists, please don't hesitate to email him at <petschekr@gmail.com>.");
 							}
 							else if (err.code === -6) {
-								bot.sendMessage(chatterID, "You have insufficient funds to donate " + donationAmount + " DOGE");
-								bot.sendMessage(chatterID, "Your current balance is: " + balance + " DOGE");
+								bot.sendMessage(chatterID, "You have insufficient funds to donate " + donationAmount + " Gamerscoins");
+								bot.sendMessage(chatterID, "Your current balance is: " + balance + " Gamerscoins");
 							}
 							else {
 								bot.sendMessage(chatterID, reportError({code: err.code, id: chatterID, address: donationAddress, amount: donationAmount}, "Donating funds"));
 							}
 							return;
 						}
-						bot.sendMessage(chatterID, "Your donation of " + donationAmount + " DOGE was successfully donated. (Donation address: " + donationAddress + ")\nTxID for this donation is: " + txid + "\nThank you very much for your support of this project.");
+						bot.sendMessage(chatterID, "Your donation of " + donationAmount + " Gamerscoins was successfully donated. (Donation address: " + donationAddress + ")\nTxID for this donation is: " + txid + "\nThank you very much for your support of this project.");
 						// Record the donation in the database
 						Collections.Donations.insert({
 							"sender": {
@@ -644,22 +644,22 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 							}
 						});
 						// Reimburse the user for their transaction fee
-						dogecoin.getTransaction(txid, function(err: any, txInfo: any) {
+						gamerscoin.getTransaction(txid, function(err: any, txInfo: any) {
 							if (err) {
 								bot.sendMessage(chatterID, reportError(err, "Retrieving tx info in +donate"));
 								return;
 							}
 							var fee: number = Math.abs(txInfo.fee);
 							if (fee === 0) {
-								bot.sendMessage(chatterID, "The transaction fee was 0 DOGE");
+								bot.sendMessage(chatterID, "The transaction fee was 0 Gamerscoins");
 								return;
 							}
-							dogecoin.move("FeePool", chatterID, fee, function(err: any, success: boolean) {
+							gamerscoin.move("FeePool", chatterID, fee, function(err: any, success: boolean) {
 								if (err) {
 									bot.sendMessage(chatterID, reportError(err, "Reimbursing the user for their transaction fee"));
 									return;
 								}
-								bot.sendMessage(chatterID, "The transaction fee of " + fee + " DOGE has been reimbursed");
+								bot.sendMessage(chatterID, "The transaction fee of " + fee + " Gamerscoins has been reimbursed");
 							});
 						});
 					});
@@ -676,7 +676,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					bot.sendMessage(chatterID, "You must be registered to tip someone");
 					return;
 				}
-				dogecoin.getBalance(chatterID, function(err: any, balance: number) {
+				gamerscoin.getBalance(chatterID, function(err: any, balance: number) {
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "Retrieving user balance in +tip"));
 						return;
@@ -701,17 +701,17 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					else {
 						amount = numeral().unformat(rawAmount);
 						if (amount === 0) {
-							bot.sendMessage(chatterID, "Invalid DOGE amount to tip entered");
+							bot.sendMessage(chatterID, "Invalid Gamerscoins amount to tip entered");
 							return;
 						}
 					}
 					if (amount > balance) {
-						bot.sendMessage(chatterID, "Insufficient funds to tip " + amount + " DOGE");
-						bot.sendMessage(chatterID, "You can deposit more DOGE to your deposit address: " + user.address);
+						bot.sendMessage(chatterID, "Insufficient funds to tip " + amount + " Gamerscoins");
+						bot.sendMessage(chatterID, "You can deposit more Gamerscoins to your deposit address: " + user.address);
 						return;
 					}
 					if (amount < 1) {
-						bot.sendMessage(chatterID, "You must tip at least 1 DOGE");
+						bot.sendMessage(chatterID, "You must tip at least 1 Gamerscoins");
 						return;
 					}
 					var personToTipID: string = undefined;
@@ -773,7 +773,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 										// Invite them to the group and add them to the db
 										//bot.addFriend(personToTipID);
 										inviteToGroup(personToTipID);
-										dogecoin.getNewAddress(personToTipID, function(err: Error, address: string) {
+										gamerscoin.getNewAddress(personToTipID, function(err: Error, address: string) {
 											if (err) {
 												bot.sendMessage(chatterID, reportError(err, "Generating address for autoregistered user"));
 												return;
@@ -845,7 +845,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								"refund": false,
 								"USD": amount * prices["DOGE/USD"]
 							};
-							dogecoin.move(chatterID, personToTipID, amount, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
+							gamerscoin.move(chatterID, personToTipID, amount, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
 								if (err) {
 									err.chatterID = chatterID;
 									err.personToTipID = personToTipID;
@@ -855,7 +855,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 									return;
 								}
 								if (/\+verify/i.test(message))
-									bot.sendMessage(DogeTipGroupID, personToTipName + " was tipped " + amount + " DOGE by " + user.name + "!");
+									bot.sendMessage(DogeTipGroupID, personToTipName + " was tipped " + amount + " Gamerscoins by " + user.name + "!");
 								// Add the tip to the database
 								Collections.Tips.insert({
 									"sender": {
@@ -881,11 +881,11 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 									}
 									if (!unregisteredUser) {
 										// Notify both parties of tip
-										bot.sendMessage(chatterID, "You tipped " + personToTipName + " " + amount + " DOGE successfully");
-										bot.sendMessage(personToTipID, "You were tipped " + amount + " DOGE by " + user.name);
+										bot.sendMessage(chatterID, "You tipped " + personToTipName + " " + amount + " Gamerscoins successfully");
+										bot.sendMessage(personToTipID, "You were tipped " + amount + " Gamerscoins by " + user.name);
 									}
 									else {
-										bot.sendMessage(chatterID, "You tipped " + personToTipName + " " + amount + " DOGE successfully. If they do not accept the tip within " + purgeTime + " hours, the tip will be refunded back to you.");
+										bot.sendMessage(chatterID, "You tipped " + personToTipName + " " + amount + " Gamerscoins successfully. If they do not accept the tip within " + purgeTime + " hours, the tip will be refunded back to you.");
 									}
 								});
 							});
@@ -895,7 +895,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 			});
 			break;
 		case "+accept":
-			// Accept a pending tip and welcome that user to Dogecoin
+			// Accept a pending tip and welcome that user to Gamerscoin
 			// Unfriend the user
 			bot.removeFriend(chatterID);
 			Collections.Tips.findOne({"recipient.id": chatterID, "unregisteredUser": true}, function(err: Error, tip: any) {
@@ -919,7 +919,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "async.parallel in +accept"));
 					}
-					bot.sendMessage(chatterID, "Congrats, your tip of " + tip.amount + " DOGE from " + tip.sender.name + " was accepted! Welcome to DogeTippingBot!");
+					bot.sendMessage(chatterID, "Congrats, your tip of " + tip.amount + " Gamerscoins from " + tip.sender.name + " was accepted! Welcome to DogeTippingBot!");
 					bot.sendMessage(chatterID, "You can open up the group chat and double click on my name in the sidebar (with the gold star) to send me commands in the future.");
 					bot.sendMessage(chatterID, "Send '+help' to see all of the available commands.");
 					bot.sendMessage(chatterID, "If you have any questions or suggestions, please start a discussion within the group. RazeTheRoof <petschekr@gmail.com> is this bot's author so send any hate/love mail his way. Remember to pay your tips forward and have fun on your way to the moon!");
@@ -997,8 +997,8 @@ bot.on("user", function(userInfo): void {
 			}
 			if (!user || !tip)
 				return;
-			bot.sendMessage(userInfo.friendid, "Hello " + tip.recipient.name + ", you've been tipped " + tip.amount + " DOGE by " + tip.sender.name);
-			bot.sendMessage(userInfo.friendid, "Dogecoin is a revolutionary digital currency sent through the internet. You can find out more at http://dogecoin.com/");
+			bot.sendMessage(userInfo.friendid, "Hello " + tip.recipient.name + ", you've been tipped " + tip.amount + " Gamerscoins by " + tip.sender.name);
+			bot.sendMessage(userInfo.friendid, "Gamerscoin is a revolutionary digital currency sent through the internet. You can find out more at http://gamerscoin.com/");
 			bot.sendMessage(userInfo.friendid, "If you would like to accept this tip, please reply with '+accept'.");
 			bot.sendMessage(userInfo.friendid, "If you would like to reject this tip and want me to leave you alone, please reply with '+reject'.");
 		});
@@ -1020,7 +1020,7 @@ function unClaimedTipCheck(): void {
 					"refund": true,
 					"USD": tip.amount * prices["DOGE/USD"]
 				};
-				dogecoin.move(tip.recipient.id, tip.sender.id, tip.amount, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
+				gamerscoin.move(tip.recipient.id, tip.sender.id, tip.amount, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
 					if (err) {
 						callback(err);
 						return;
