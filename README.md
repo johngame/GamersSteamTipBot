@@ -35,7 +35,7 @@ If +verify is added, the bot will send a message confirming the tip to the group
     Donate Gamerscoins to Ryan : Coming Soon
 
 	
-Want help Dev ? :
+All contributors are welcome!!! :
 ```
 git clone https://github.com/johngame/GamersSteamTipBot
 cd GamersSteamTipBot
