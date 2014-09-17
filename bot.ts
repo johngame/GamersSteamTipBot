@@ -77,7 +77,7 @@ bot.on("loggedOn", function(): void {
 	console.log("SteamID: " + bot.steamID);
 	
 	bot.joinChat(GamersTipGroupID);
-	//bot.sendMessage(GamersTipGroupID, "dogetippingbot is back online");
+	//bot.sendMessage(GamersTipGroupID, "gamerstippingbot is back online");
 
 	unClaimedTipCheck();
 	setInterval(unClaimedTipCheck, 1000 * 60 * 60); // Check every hour
@@ -316,7 +316,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 							if (oldUser && oldUser.funds > 0) {
 								// Move their funds to their account for them
 								var tipComment = {
-									"sender": "dogetippingbot (v1)",
+									"sender": "gamerstippingbot (v1)",
 									"recipient": name,
 									"refund": false,
 									"USD": oldUser.funds * prices["DOGE/USD"]
@@ -335,7 +335,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 						if (giveawayInfo.happening) {
 							var amountToGive = giveawayInfo.amount / giveawayInfo.shibes;
 							var tipComment = {
-								"sender": "dogetippingbot",
+								"sender": "gamerstippingbot",
 								"recipient": name,
 								"refund": false,
 								"USD": amountToGive * prices["DOGE/USD"]
@@ -562,7 +562,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 		case "+help":
 			var helpMessage: string = 
 				[
-					"Hello there. I'm dogetippingbot.",
+					"Hello there. I'm gamerstippingbot.",
 					"New to Gamerscoin? Visit the official page: http://www.gamerscoin.com",
 					"",
 					"Commands:",
