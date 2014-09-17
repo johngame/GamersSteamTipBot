@@ -1,0 +1,15 @@
+{
+    "name": "GamersSteamTipBot",
+    "version": "0.0.1",
+    "description": "Tip Gamers on Steam with Gamerscoin! We are one big Happy Family !!!",
+    "keywords": ["GamersSteamTipBot"],
+    "repository": "git://github.com/johngame/GamersSteamTipBot.git",
+    "author": "Ryan Petschek",
+    "engines": { "node": ">= 0.4.0" },
+    "devDependencies": {
+    "node-gamerscoin": "*",
+    "crypto": "*",
+    "mongodb": "*",
+	"typescript-compiler": "*"
+  }
+}

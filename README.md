@@ -33,3 +33,14 @@ If +verify is added, the bot will send a message confirming the tip to the group
     GamersTippingBot by Ryan Petschek (RazeTheRoof) <petschekr@gmail.com>
     
     Donate Gamerscoins to Ryan : Coming Soon
+
+	
+Want help Dev ? :
+```
+git clone https://github.com/johngame/GamersSteamTipBot
+cd GamersSteamTipBot
+npm install
+tsc bot.ts --module "commonjs"
+node bot.js
+```
+	
