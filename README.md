@@ -35,12 +35,34 @@ If +verify is added, the bot will send a message confirming the tip to the group
     Donate Gamerscoins to Ryan : GebvwKXVPxj9KVjqQsHP3jvHKR1ZzNnaTe
 
 	
-All contributors are welcome!!! :
+All Contributors are Welcome!!!
+
+Installing GamerscoinTipBot on Linux :
+
 ```
+//Install Gamerscoin Daemon
+echo "deb http://debian.gamers-coin.org:8080 debian/" >> /etc/apt/sources.list
+apt-get update
+apt-get install gamerscoind
+
+//Start Gamerscoin Deamon
+gamerscoind
+
+//Change gamerscoin.conf ~/.gamerscoin/gamerscoin.conf
+rpcuser=gamerscoinrpc
+rpcpassword=enter_your_password
+rpcallowip=127.0.0.1
+server=1
+daemon=1
+txindex=1
+
+//Clone the Project and compile the Tipbot
 git clone https://github.com/johngame/GamersSteamTipBot
 cd GamersSteamTipBot
 npm install
 tsc bot.ts --module "commonjs"
+
+//Run the GamerscoinTipBot
 node bot.js
 ```
 	
