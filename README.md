@@ -62,7 +62,7 @@ cd GamersSteamTipBot
 npm install
 tsc bot.ts --module "commonjs"
 
-//Run the GamerscoinTipBot
+//Run GamerscoinTipBot
 node bot.js
 ```
 	
