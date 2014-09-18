@@ -37,7 +37,7 @@ credentials.rpc.password = rawCredentials.rpc.password;
 gamerscoin.auth(credentials.rpc.username, credentials.rpc.password);
 
 // Steam GroupID
-var GamersTipGroupID: string = "103582791436339013";
+var GamersTipGroupID: string = "103582791436344514";
 
 // GamersCoin Well Foundation address for The Water Project 
 // More Infos : http://gamers-coin.org/foundation
