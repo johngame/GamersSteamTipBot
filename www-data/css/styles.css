@@ -1,0 +1,384 @@
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+body {
+	background-color: #eee;
+	font-family: "Open Sans", sans-serif;
+	font-size: 16px;
+	margin: 0px;
+}
+
+h1, h2 {
+	font-family: "Open Sans", sans-serif;
+	font-size: 36px;
+	font-style: normal;
+	color: #383838;
+}
+h1 {
+	font-weight: 800;
+	margin: 10px 0px;
+}
+h2 {
+	font-weight: 400;
+	margin: 0px;
+}
+
+pre {
+	font-family: Consolas, "Courier New", serif;
+	padding: 10px;
+	background-color: rgba(0, 0, 0, 0.11);
+	border: 1px solid silver;
+	border-radius: 6px;
+	display: inline-block;
+	max-width: 100%;
+}
+pre a {
+	color: inherit;
+}
+
+a {
+	color: #DBBB00;
+	text-decoration: none;
+}
+
+.clear_both {
+	clear: both;
+}
+
+.button {
+	text-align: center;
+	font-size: 24px;
+	font-style: italic;
+	font-weight: 600;
+	color: white;
+	padding: 7px;
+	border-radius: 3px;
+	background-color: #484848;
+	border: 1px solid #353535;
+
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.button:hover{
+	box-shadow: inset 0px 0px 5px rgba(0,0,0,0.2) !important;
+}
+
+.button:active{
+	box-shadow: inset 0px 3px 5px rgba(0,0,0,0.2) !important;
+}
+
+.button.button-yellow {
+	background-color: #c3a635;
+	border:1px solid #cab24e;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+}
+
+.notification {
+	display: inline-block;
+	padding: 15px;
+	background-color: rgba(255, 255, 255, 0.3);
+	border-radius: 3px;
+	box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.5) inset, 0px 0px 5px rgba(0, 0, 0, 0.2), inset 0px 1px 2px white;
+	color: rgb(31, 31, 31);
+	text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.18);
+
+	max-width: 400px;
+
+	margin: 10px;
+}
+
+.left {
+	float: left;
+}
+.right {
+	float: right;
+}
+
+.align-center{
+	text-align: center;
+}
+
+.donate_box{
+	padding: 10px;
+	background-color: #333;
+	color: #eee;
+	border: 1px solid #383838;
+	display: inline-block;
+	border-radius: 3px;
+}
+
+header, footer {
+	background-color: #333;
+	color: #eee;
+}
+header {
+	min-height: 370px;
+}
+header .logo {
+	width: 230px;
+	float: left;
+	margin: 30px 10px 10px;
+}
+header .title-wrapper {
+	float: left;
+	margin-top: 70px;
+	width: 500px;
+}
+header h1 {
+	font-size: 49px;
+	white-space: nowrap;
+	font-weight: 800;
+	display: inline-block;
+	color: #eee;
+}
+h1 small {
+	font-size: 50%;
+	opacity: 0.7;
+	position: relative;
+	top: -8px;
+}
+header h1 a {
+	color: inherit;
+}
+header h1 a:hover {
+	text-decoration: underline;
+}
+header h2 {
+	font-size: 24px;
+	white-space: nowrap;
+	font-weight: 200;
+	font-style: italic;
+	display: inline-block;
+	position: relative;
+	top: -15px;
+	color: #eee;
+}
+footer {
+	min-height: 100px;
+	padding: 20px;
+	text-align: center;
+	border-top: 1px solid #9E9E9E;
+	border-radius: 4px 4px 0px 0px;
+	margin-top: 20px;
+}
+footer a {
+	color: rgba(255, 255, 255, 0.7);
+}
+footer a:hover {
+	color: white;
+}
+
+.bot-status-button {
+	padding: 10px 0px;
+	background-color: #202020;
+	color: #eee;
+	border: 1px solid #131313;
+	border-radius: 3px;
+	font-size: 24px;
+	font-weight: 800;
+	box-shadow: 0px 0px 1px rgba(0,0,0,0.2);
+
+	width: 180px;
+	float: right;
+	text-align: center;
+}
+.bot-status-text {
+	text-transform: uppercase;
+}
+.bot-status-text::before {
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	border-radius: 100%;
+	background-color: gray;
+	margin-right: 5px;
+
+	position: relative;
+	top: -3px;
+
+	content: " ";
+}
+.bot-status-text.online::before {
+	background-color: #21af1a;
+}
+.bot-status-text.offline::before {
+	background-color: #d32929;
+}
+
+.donate_header {
+	display: inline-block;
+	float: left;
+	width: 200px;
+	margin: 0px 10px;
+}
+
+.button_description {
+	text-align: center;
+	margin-top: 7px;
+}
+
+#group_members {
+	display: inline-block;
+	top: -9px;
+	font-size: 18px;
+	position: relative;
+}
+
+.container {
+	max-width: 1000px;
+	display: block;
+	margin: 0 auto;
+	position: relative;
+}
+
+ol {
+	font-size: 24px;
+	margin-top: 0;
+}
+img.instructions {
+	display: block;
+	margin: 0 auto;
+	/* Compensate for transparent space on the gif */
+	margin-bottom: -40px;
+	margin-top: -15px;
+}
+
+code {
+	display: inline-block;
+	padding: 5px;
+	background-color: rgba(255, 255, 255, 0.3);
+	border-radius: 3px;
+	box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.5) inset, 0px 0px 5px rgba(0, 0, 0, 0.2), inset 0px 1px 2px white;
+	/*color: rgb(31, 31, 31);*/
+	color: #c7254e;
+
+	font-family: "Inconsolata", monospace, sans-serif;
+}
+
+.command_description {
+	font-size: 22px;
+	border-bottom: 1px solid rgb(255, 255, 255);
+	margin-bottom: 20px;
+	box-shadow: inset rgb(139, 139, 139) 0px -2px 0px -1px;
+	padding-bottom: 10px;
+}
+
+code.example {
+	margin: 10px;
+}
+
+p.description {
+	margin: 5px;
+	font-size: 80%;
+}
+caption {
+	/* Display like an h1 */
+	font-weight: 800;
+	margin: 0;
+	font-family: "Open Sans", sans-serif;
+	font-size: 36px;
+	font-style: normal;
+	color: #383838;
+	text-align: left;
+}
+
+#donate a {
+	text-align: center;
+	display: inherit;
+	margin-top: -10px;
+}
+/* For border radius on the table */
+tr:first-child td:first-child { border-top-left-radius: 3px; }
+tr:first-child td:last-child { border-top-right-radius: 3px; }
+tr:last-child td:first-child { border-bottom-left-radius: 3px; }
+tr:last-child td:last-child { border-bottom-right-radius: 3px; }
+/* Bootstrap table code */
+.table td, .table th {
+	background-color: #fafafa !important;
+}
+.table {
+	border-collapse: collapse !important;
+	border-radius: 3px;
+}
+.table-bordered th, .table-bordered td {
+	border: 1px solid #ddd !important;
+}
+.table {
+  width: 100%;
+  margin-bottom: 20px;
+  display: inline-table;
+}
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+	padding: 8px;
+	line-height: 1.42857143;
+	vertical-align: top;
+	border-top: 1px solid #ddd;
+}
+.table > thead > tr > th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #ddd;
+}
+.table > caption + thead > tr:first-child > th,
+.table > colgroup + thead > tr:first-child > th,
+.table > thead:first-child > tr:first-child > th,
+.table > caption + thead > tr:first-child > td,
+.table > colgroup + thead > tr:first-child > td,
+.table > thead:first-child > tr:first-child > td {
+	border-top: 0;
+}
+.table > tbody + tbody {
+	border-top: 2px solid #ddd;
+}
+.table-bordered {
+	border: 1px solid #ddd;
+}
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+	border: 1px solid #ddd;
+}
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td {
+	border-bottom-width: 2px;
+}
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+	background-color: #f9f9f9;
+}
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+	background-color: #f5f5f5;
+}
+
+/* For pie chart legends */
+#pie {
+	margin-left: 175px;
+}
+.legend {
+	width: 200px;
+	border: 1px solid #333;
+	border-radius: 3px;
+	float: right;
+	margin-top: 135px;
+
+	margin-right: 175px;
+}
+
+.legend .title {
+	display: block;
+	margin: 0.5em;
+	border-style: solid;
+	border-width: 0 0 0 1em;
+	padding: 0 0.3em;
+}
