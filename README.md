@@ -40,6 +40,28 @@ All Contributors are Welcome!!!
 Installing GamerscoinTipBot on Linux :
 
 ```
+//How to Install MongoDB 2.6 on Ubuntu and Dabian Systems
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+
+For Ubuntu:
+echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+
+For Debian:
+echo 'deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+
+sudo apt-get update
+sudo apt-get install mongodb-org
+
+//If you want to install any specific version of MontoDB, define the version number like below
+apt-get install mongodb-org=2.6.0 mongodb-org-server=2.6.0 mongodb-org-shell=2.6.0 mongodb-org-mongos=2.6.0 mongodb-org-tools=2.6.0
+
+//Start/Stop MongoDB Service:
+sudo service mongod start
+sudo service mongod stop
+
+//Start mongod :
+mongod
+
 //Install Gamerscoin Daemon
 echo "deb http://debian.gamers-coin.org:8080 debian/" >> /etc/apt/sources.list
 apt-get update
