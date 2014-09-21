@@ -59,6 +59,10 @@ apt-get install mongodb-org=2.6.0 mongodb-org-server=2.6.0 mongodb-org-shell=2.6
 sudo service mongod start
 sudo service mongod stop
 
+//Add user for GamerscoinTipBot
+adduser GamerscoinTipbot
+su GamerscoinTipbot
+
 //Start mongod :
 mongod
 
