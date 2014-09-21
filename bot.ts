@@ -1059,6 +1059,9 @@ function unClaimedTipCheck(): void {
 					Collections.Tips.update({"_id": tip["_id"]}, {$set: {"refunded": true}}, {w:1}, callback);
 				});
 			}
+			else {
+				callback(null);
+			}
 		}, function(err) {
 			if (err) {
 				console.error("An error occurred: " + reportError(err, "Checking for expired tips to refund", true));
