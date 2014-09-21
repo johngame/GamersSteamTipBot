@@ -210,7 +210,7 @@ function priceCommand(chatterID: string, message: string, group: boolean = true)
 	var priceMessage: string[] = [
 		"Exchange rates as of " + new Date(prices.LastUpdated).toString() + ":",
 		"BTC/USD: $" + prices["BTC/USD"].toFixed(2) + " (Coinbase)",
-		"GMC/BTC: " + prices["GMC/BTC"].toFixed(8) + " BTC (MintPal)",
+		"GMC/BTC: " + prices["GMC/BTC"].toFixed(8) + " BTC (https://comkort.com/market/trade/gmc_btc)",
 		"GMC/USD: $" + prices["GMC/USD"].toFixed(8),
 		"1 GMC = 1 GMC"
 	];
