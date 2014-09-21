@@ -116,8 +116,8 @@ function getHTTPPage(url: string, callback: (err: Error, content: string) => voi
 }
 var prices = {
 	"BTC/USD": null,
-	"DOGE/BTC": null,
-	"DOGE/USD": null,
+	"GMC/BTC": null,
+	"GMC/USD": null,
 	"LastUpdated": null
 };
 function getPrices(): void {
@@ -127,8 +127,8 @@ function getPrices(): void {
 			getHTTPPage("https://coinbase.com/api/v1/currencies/exchange_rates", callback);
 		},
 		function(callback) {
-			// Mintpal DOGE/BTC price
-			getHTTPPage("https://api.mintpal.com/v1/market/stats/DOGE/BTC", callback);
+			// Mintpal GMC/BTC price
+			getHTTPPage("https://api.comkort.com/v1/public/market/summary?market_alias=gmc_btc", callback);
 		}
 	], function(err: Error, results: any[]): void {
 		if (err) {
@@ -137,12 +137,12 @@ function getPrices(): void {
 		}
 		try {
 			prices["BTC/USD"] = parseFloat(JSON.parse(results[0])["btc_to_usd"]);
-			prices["DOGE/BTC"] = parseFloat(JSON.parse(results[1])[0].last_price);
+			prices["GMC/BTC"] parseFloat(JSON.parse(results[1]).markets["GMC/BTC"].last_price;
 		}
 		catch(e) {
 			return;
 		}
-		prices["DOGE/USD"] = prices["BTC/USD"] * prices["DOGE/BTC"];
+		prices["GMC/USD"] = prices["BTC/USD"] * prices["GMC/BTC"];
 		// Return to strings with .toFixed(8)
 		prices.LastUpdated = Date.now();
 	});
@@ -210,13 +210,13 @@ function priceCommand(chatterID: string, message: string, group: boolean = true)
 	var priceMessage: string[] = [
 		"Exchange rates as of " + new Date(prices.LastUpdated).toString() + ":",
 		"BTC/USD: $" + prices["BTC/USD"].toFixed(2) + " (Coinbase)",
-		"DOGE/BTC: " + prices["DOGE/BTC"].toFixed(8) + " BTC (MintPal)",
-		"DOGE/USD: $" + prices["DOGE/USD"].toFixed(8),
-		"1 DOGE = 1 DOGE"
+		"GMC/BTC: " + prices["GMC/BTC"].toFixed(8) + " BTC (MintPal)",
+		"GMC/USD: $" + prices["GMC/USD"].toFixed(8),
+		"1 GMC = 1 GMC"
 	];
 	if (message.split(" ")[1]) {
 		var amount: number = numeral().unformat(message.split(" ")[1]);
-		var amountUSD: number = amount * prices["DOGE/USD"];
+		var amountUSD: number = amount * prices["GMC/USD"];
 		priceMessage.push(amount + " Gamerscoins = " + numeral(amountUSD).format("$0,0.00"));
 	}
 	bot.sendMessage(toSend, priceMessage.join("\n"));
@@ -305,7 +305,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 						}
 						bot.sendMessage(chatterID, "Welcome " + name + "!");
 						bot.sendMessage(chatterID, "Your deposit address is: " + address);
-						bot.sendMessage(chatterID, "Tip users with '+tip <STEAM NAME> <AMOUNT> doge'");
+						bot.sendMessage(chatterID, "Tip users with '+tip <STEAM NAME> <AMOUNT> Gamerscoins'");
 						bot.sendMessage(chatterID, "If you need help, reply with '+help'");
 						// Check if they are an old user
 						Collections.OldUsers.findOne({"id": chatterID}, function(err: Error, oldUser) {
@@ -319,7 +319,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 									"sender": "gamerstippingbot (v1)",
 									"recipient": name,
 									"refund": false,
-									"USD": oldUser.funds * prices["DOGE/USD"]
+									"USD": oldUser.funds * prices["GMC/USD"]
 								};
 								gamerscoin.move("OldUsersPool", chatterID, oldUser.funds, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
 									if (err) {
@@ -338,14 +338,14 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								"sender": "gamerstippingbot",
 								"recipient": name,
 								"refund": false,
-								"USD": amountToGive * prices["DOGE/USD"]
+								"USD": amountToGive * prices["GMC/USD"]
 							};
 							gamerscoin.move(giveawayInfo.account, chatterID, amountToGive, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
 								if (err) {
 									bot.sendMessage(chatterID, reportError(err, "Moving balance for a giveaway"));
 									return;
 								}
-								bot.sendMessage(chatterID, "As part of the current giveaway, you've been given " + amountToGive + " DOGE! You can use that Gamerscoins to tip others on Steam and help spread the word!");
+								bot.sendMessage(chatterID, "As part of the current giveaway, you've been given " + amountToGive + " Gamerscoin! You can use that Gamerscoins to tip others on Steam and help spread the word!");
 							});
 						}
 					});
@@ -494,14 +494,14 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 
 					var sendToAddress: string = message.split(" ")[1];
 					if (sendToAddress === undefined) {
-						bot.sendMessage(chatterID, "Missing address. Notation for +withdraw is '+withdraw <ADDRESS> <AMOUNT|all> doge'.");
+						bot.sendMessage(chatterID, "Missing address. Notation for +withdraw is '+withdraw <ADDRESS> <AMOUNT|all> Gamerscoins'.");
 						return;
 					}
 
 					var rawAmount: string = message.split(" ")[2];
 					var sendAmount: number = 0;
 					if (rawAmount === undefined) {
-						bot.sendMessage(chatterID, "Missing amount. Notation for +withdraw is '+withdraw <ADDRESS> <AMOUNT|all> doge'.");
+						bot.sendMessage(chatterID, "Missing amount. Notation for +withdraw is '+withdraw <ADDRESS> <AMOUNT|all> Gamerscoins'.");
 						return;
 					}
 					if (rawAmount.toLowerCase() === "all") {
@@ -563,16 +563,16 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 			var helpMessage: string = 
 				[
 					"Hello there. I'm gamerstippingbot.",
-					"New to Gamerscoin? Visit the official page: http://www.gamerscoin.com",
+					"New to Gamerscoin? Visit the official page: http://www.gamers-coin.org",
 					"",
 					"Commands:",
 					"	+register - Notify the bot that you exist. You will be added to the database and will receive a deposit address",
 					"	+deposit - View your deposit address",
 					"	+balance - Check the amount of Gamerscoins in your account",
 					"	+history - Display your current balance and a list of your 10 most recent transactions",
-					"	+withdraw <ADDRESS> <AMOUNT|all> doge - Withdraw funds in your account to the specified address (the 1 Gamerscoins transaction fee will be covered by the bot)",
-					"	+tip <STEAM NAME|COMMUNITY URL> <AMOUNT|all> doge [+verify] - Send a Steam user a tip. To send tips to users that aren't registered with the bot, tip to their profile URL. (More details about tipping available at http://steamdogebot.com/ ) If +verify is added, the bot will send a message confirming the tip to the group chat.",
-					"	+donate <AMOUNT|all> doge - Donate doge to the developer to keep the bot alive. The server costs about 17,000 Gamerscoins a month. Any help is greatly appreciated!",
+					"	+withdraw <ADDRESS> <AMOUNT|all> Gamerscoins - Withdraw funds in your account to the specified address (the 1 Gamerscoins transaction fee will be covered by the bot)",
+					"	+tip <STEAM NAME|COMMUNITY URL> <AMOUNT|all> Gamerscoins [+verify] - Send a Steam user a tip. To send tips to users that aren't registered with the bot, tip to their profile URL. (More details about tipping available at http://steamdogebot.com/ ) If +verify is added, the bot will send a message confirming the tip to the group chat.",
+					"	+donate <AMOUNT|all> Gamerscoins - Donate Gamerscoins to the developer to keep the bot alive. The server costs about 17,000 Gamerscoins a month. Any help is greatly appreciated!",
 					"	+version - Current bot version",
 					"	+help - This help dialog",
 					"",
@@ -583,7 +583,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 			bot.sendMessage(chatterID, helpMessage);
 			break;
 		case "+version":
-			bot.sendMessage(chatterID, "DogeTippingBot " + version + " by Ryan Petschek (RazeTheRoof) <petschekr@gmail.com>\nDonate to " + donationAddress + " if you enjoy this bot and want keep it running. Servers cost money! (You can also send the bot '+donate <AMOUNT> doge' to donate from your tipping balance.)");
+			bot.sendMessage(chatterID, "GamerscoinTippingBot " + version + " by Ryan Petschek (RazeTheRoof) <petschekr@gmail.com>\nDonate to " + donationAddress + " if you enjoy this bot and want keep it running. Servers cost money! (You can also send the bot '+donate <AMOUNT> Gamerscoin' to donate from your tipping balance.)");
 			break;
 		case "+donate":
 			Collections.Users.findOne({"id": chatterID}, function(err: Error, user) {
@@ -604,7 +604,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					var rawDonationAmount: string = message.split(" ")[1];
 					var donationAmount: number = 0;
 					if (rawDonationAmount === undefined) {
-						bot.sendMessage(chatterID, "Missing amount. Notation for +donate is '+donate <AMOUNT|all> doge'.");
+						bot.sendMessage(chatterID, "Missing amount. Notation for +donate is '+donate <AMOUNT|all> Gamerscoins'.");
 						return;
 					}
 					if (rawDonationAmount.toLowerCase() === "all") {
@@ -641,7 +641,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								"id": chatterID
 							},
 							"amount": donationAmount,
-							"USD": donationAmount * prices["DOGE/USD"],
+							"USD": donationAmount * prices["GMC/USD"],
 							"timestamp": Date.now(),
 							"time": new Date().toString(),
 							"groupID": GamersTipGroupID,
@@ -676,6 +676,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 			});
 			break;
 		case "+tip":
+			console.log(1);
 			Collections.Users.findOne({"id": chatterID}, function(err: Error, user) {
 				if (err) {
 					bot.sendMessage(chatterID, reportError(err, "Retrieving user in +tip"));
@@ -685,6 +686,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					bot.sendMessage(chatterID, "You must be registered to tip someone");
 					return;
 				}
+				console.log(2);
 				gamerscoin.getBalance(chatterID, function(err: any, balance: number) {
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "Retrieving user balance in +tip"));
@@ -700,7 +702,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 						var rawAmount: string = tipInfo[2];
 					}
 					else {
-						bot.sendMessage(chatterID, "Invalid +tip format. Notation for +tip is '+tip <STEAM NAME|COMMUNITY URL> <AMOUNT|all> doge'.");
+						bot.sendMessage(chatterID, "Invalid +tip format. Notation for +tip is '+tip <STEAM NAME|COMMUNITY URL> <AMOUNT|all> Gamerscoins'.");
 						return;
 					}
 					var amount: number = 0;
@@ -726,12 +728,15 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					var personToTipID: string = undefined;
 					var unregisteredUser: boolean = false;
 					var usedURL: boolean = false;
+					console.log(3);
 					if ((/^https?:\/\/steamcommunity\.com\/(?:id|profiles)\/.*$/i).exec(personToTipName)) {
+						console.log(4);
 						var communityURL: string = personToTipName;
 						communityURL += "?xml=1"; // Get Steam to return an XML description
 						usedURL = true;
 
 						getHTTPPage(communityURL, function(err: Error, content: string): void {
+							console.log(5);
 							if (err) {
 								bot.sendMessage(chatterID, reportError(err, "Retrieving user information via their community URL"));
 								return;
@@ -745,17 +750,22 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								bot.sendMessage(chatterID, "Make sure that you go to the person you want to tip's profile page and right click > Copy Page URL.");
 								return;
 							}
+							console.log(6);
 							Collections.Users.findOne({"id": personToTipID}, function(err: Error, personToTip): void {
+								console.log(7);
 								if (err) {
 									bot.sendMessage(chatterID, reportError(err, "Checking if the tippee is registered"));
 									return;
 								}
 								if (personToTip) {
+									console.log(8);
 									unregisteredUser = false;
 									if (!(/\+nosave/i.test(message))) {
 										// Update the tipper's db entry to include their new favorite
 										user.favorites[personToTipName] = personToTipID;
+										console.log(9);
 										Collections.Users.update({"id": chatterID}, {$set: {"favorites": user.favorites}}, {w:1}, function(err: Error): void {
+											console.log(10);
 											if (err) {
 												bot.sendMessage(chatterID, reportError(err, "Setting user's favorites"));
 												return;
@@ -764,13 +774,16 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 										});
 									}
 									else {
+										console.log(11);
 										continueWithTip();
 									}
 								}
 								else {
+									console.log(12);
 									unregisteredUser = true;
 									// Check the Steam ID against the blacklist
 									Collections.Blacklist.findOne({"id": personToTipID}, function(err: Error, blacklistedUser) {
+										console.log(13);
 										if (err) {
 											bot.sendMessage(chatterID, reportError(err, "Checking user against blacklist"));
 											return;
@@ -782,7 +795,9 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 										// Invite them to the group and add them to the db
 										//bot.addFriend(personToTipID);
 										inviteToGroup(personToTipID);
+										console.log(14);
 										gamerscoin.getNewAddress(personToTipID, function(err: Error, address: string) {
+											console.log(15);
 											if (err) {
 												bot.sendMessage(chatterID, reportError(err, "Generating address for autoregistered user"));
 												return;
@@ -794,6 +809,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 												"favorites": {},
 												"autoregistered": true
 											}, {w:1}, function(err: Error) {
+												console.log(16);
 												if (err) {
 													bot.sendMessage(chatterID, reportError(err, "Autoregistering user in database"));
 													return;
@@ -810,7 +826,9 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 						continueWithTip();
 					}
 					function continueWithTip(): void {
+						console.log(17);
 						Collections.Users.find({name: personToTipName}).toArray(function(err: Error, possibleUsers: any[]) {
+							console.log(18);
 							if (err) {
 								bot.sendMessage(chatterID, reportError(err, "Retrieving users for +tip"));
 								return;
@@ -824,8 +842,8 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								if (possibleUsers.length < 1) {
 									bot.sendMessage(chatterID, "I can't find any users with that nickname!");
 									bot.sendMessage(chatterID, "Find community URL to tip them. You can find this URL by visiting their profile page and right clicking > Copy Page URL.");
-									bot.sendMessage(chatterID, "Then, tip with '+tip <COMMUNITY URL> <AMOUNT> doge'");
-									bot.sendMessage(chatterID, "For example, '+tip http://steamcommunity.com/id/razed/ 100 doge +verify'");
+									bot.sendMessage(chatterID, "Then, tip with '+tip <COMMUNITY URL> <AMOUNT> Gamerscoin'");
+									bot.sendMessage(chatterID, "For example, '+tip http://steamcommunity.com/id/razed/ 100 Gamerscoin +verify'");
 									bot.sendMessage(chatterID, "They will receive a friend request and if they accept, they will be registered with the bot so you can tip them with their nickname.");
 									bot.sendMessage(chatterID, "They will have " + purgeTime + " hours to accept before the tip is refunded.");
 									return;
@@ -833,8 +851,8 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								if (possibleUsers.length > 1) {
 									bot.sendMessage(chatterID, "There are " + possibleUsers.length + " users with that nickname!");
 									bot.sendMessage(chatterID, "To tip the right one, find their community URL by visiting their profile page and right clicking > Copy Page URL.");
-									bot.sendMessage(chatterID, "Then, tip with '+tip <COMMUNITY URL> <AMOUNT> doge'");
-									bot.sendMessage(chatterID, "For example, '+tip http://steamcommunity.com/id/razed/ 100 doge +verify'");
+									bot.sendMessage(chatterID, "Then, tip with '+tip <COMMUNITY URL> <AMOUNT> Gamerscoins'");
+									bot.sendMessage(chatterID, "For example, '+tip http://steamcommunity.com/id/razed/ 100 Gamerscoin +verify'");
 									bot.sendMessage(chatterID, "That user will be automatically linked to that nickname for you so can use their nickname to tip them in the future.");
 									bot.sendMessage(chatterID, "If you would not like them to be linked to that nickname for you, include '+nosave' at the end of the tip.");
 									return;
@@ -845,16 +863,18 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								bot.sendMessage(chatterID, "wow. such self tip.");
 							}
 							if (personToTipID === bot.steamID) {
-								bot.sendMessage(chatterID, "I'm sorry, but you can't tip me. If you would like to donate, please reply with '+donate <AMOUNT> doge'. Thank you!");
+								bot.sendMessage(chatterID, "I'm sorry, but you can't tip me. If you would like to donate, please reply with '+donate <AMOUNT> Gamerscoins'. Thank you!");
 								return;
 							}
 							var tipComment = {
 								"sender": user.name,
 								"recipient": personToTipName,
 								"refund": false,
-								"USD": amount * prices["DOGE/USD"]
+								"USD": amount * prices["GMC/USD"]
 							};
+							console.log(19);
 							gamerscoin.move(chatterID, personToTipID, amount, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
+								console.log(20);
 								if (err) {
 									err.chatterID = chatterID;
 									err.personToTipID = personToTipID;
@@ -866,6 +886,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								if (/\+verify/i.test(message))
 									bot.sendMessage(GamersTipGroupID, personToTipName + " was tipped " + amount + " Gamerscoins by " + user.name + "!");
 								// Add the tip to the database
+								console.log(21);
 								Collections.Tips.insert({
 									"sender": {
 										"name": tipComment.sender,
@@ -876,7 +897,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 										"id": personToTipID
 									},
 									"amount": amount,
-									"USD": amount * prices["DOGE/USD"],
+									"USD": amount * prices["GMC/USD"],
 									"timestamp": Date.now(),
 									"time": new Date().toString(),
 									"groupID": GamersTipGroupID,
@@ -884,6 +905,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 									"accepted": !unregisteredUser,
 									"refunded": false
 								}, {w:1}, function(err): void {
+									console.log(22);
 									if (err) {
 										bot.sendMessage(chatterID, reportError(err, "Inserting tip into database"));
 										return;
@@ -928,7 +950,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "async.parallel in +accept"));
 					}
-					bot.sendMessage(chatterID, "Congrats, your tip of " + tip.amount + " Gamerscoins from " + tip.sender.name + " was accepted! Welcome to DogeTippingBot!");
+					bot.sendMessage(chatterID, "Congrats, your tip of " + tip.amount + " Gamerscoins from " + tip.sender.name + " was accepted! Welcome to GamersTippingBot!");
 					bot.sendMessage(chatterID, "You can open up the group chat and double click on my name in the sidebar (with the gold star) to send me commands in the future.");
 					bot.sendMessage(chatterID, "Send '+help' to see all of the available commands.");
 					bot.sendMessage(chatterID, "If you have any questions or suggestions, please start a discussion within the group. RazeTheRoof <petschekr@gmail.com> is this bot's author so send any hate/love mail his way. Remember to pay your tips forward and have fun on your way to the moon!");
@@ -974,7 +996,7 @@ bot.on("friend", function(steamID: string, relationship: number): void {
 	if (relationship === Steam.EFriendRelationship.RequestRecipient) {
 		bot.addFriend(steamID);
 		setTimeout(function(): void {
-			bot.sendMessage(steamID, "Go to the Doge Tip group to message me. I can't accept friend requests.");
+			bot.sendMessage(steamID, "Go to the GamersTradeBase Tip group to message me. I can't accept friend requests.");
 			bot.sendMessage(steamID, "Removing friend...");
 			setTimeout(function(): void {
 				bot.removeFriend(steamID);
@@ -1027,7 +1049,7 @@ function unClaimedTipCheck(): void {
 					"sender": tip.recipient.name,
 					"recipient": tip.sender.name,
 					"refund": true,
-					"USD": tip.amount * prices["DOGE/USD"]
+					"USD": tip.amount * prices["GMC/USD"]
 				};
 				gamerscoin.move(tip.recipient.id, tip.sender.id, tip.amount, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
 					if (err) {
@@ -1036,6 +1058,9 @@ function unClaimedTipCheck(): void {
 					}
 					Collections.Tips.update({"_id": tip["_id"]}, {$set: {"refunded": true}}, {w:1}, callback);
 				});
+			}
+			else {
+				callback(null);
 			}
 		}, function(err) {
 			if (err) {
