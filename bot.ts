@@ -137,7 +137,7 @@ function getPrices(): void {
 		}
 		try {
 			prices["BTC/USD"] = parseFloat(JSON.parse(results[0])["btc_to_usd"]);
-			prices["GMC/BTC"] parseFloat(JSON.parse(results[1]).markets["GMC/BTC"].last_price;
+			prices["GMC/BTC"] = parseFloat(JSON.parse(results[1]).markets["GMC/BTC"].last_price);
 		}
 		catch(e) {
 			return;
