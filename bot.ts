@@ -37,20 +37,20 @@ credentials.rpc.password = rawCredentials.rpc.password;
 gamerscoin.auth(credentials.rpc.username, credentials.rpc.password);
 
 // Steam GroupID
-var GamersTipGroupID: string = "103582791436344514";
+var GamersTipGroupID: string = "103582791436371782";
 
 // GamersCoin Well Foundation address for The Water Project 
 // More Infos : http://gamers-coin.org/foundation
 var donationAddress: string = "GamenzL8ULFz1yBFykLrja7F5DL5zjCyYC";
 
 // Hours until tips to nonregistered users are refunded
-var purgeTime: number = 6; 
+var purgeTime: number = 24; 
 
 // Bot Version 
 var version = "v0.0.2";
 
 // Connect to MongoDB
-MongoClient.connect("mongodb://localhost:27017/gamerscointipbot", function(err: any, db: mongodb.Db) {
+MongoClient.connect("mongodb://localhost:27017/gamerscointipbotdb", function(err: any, db: mongodb.Db) {
 if (err)
 	throw err
 var Collections: {
