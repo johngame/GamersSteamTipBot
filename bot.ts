@@ -676,7 +676,6 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 			});
 			break;
 		case "+tip":
-			console.log(1);
 			Collections.Users.findOne({"id": chatterID}, function(err: Error, user) {
 				if (err) {
 					bot.sendMessage(chatterID, reportError(err, "Retrieving user in +tip"));
@@ -686,7 +685,6 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					bot.sendMessage(chatterID, "You must be registered to tip someone");
 					return;
 				}
-				console.log(2);
 				gamerscoin.getBalance(chatterID, function(err: any, balance: number) {
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "Retrieving user balance in +tip"));
@@ -728,7 +726,6 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					var personToTipID: string = undefined;
 					var unregisteredUser: boolean = false;
 					var usedURL: boolean = false;
-					console.log(3);
 					if ((/^https?:\/\/steamcommunity\.com\/(?:id|profiles)\/.*$/i).exec(personToTipName)) {
 						console.log(4);
 						var communityURL: string = personToTipName;
@@ -736,7 +733,6 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 						usedURL = true;
 
 						getHTTPPage(communityURL, function(err: Error, content: string): void {
-							console.log(5);
 							if (err) {
 								bot.sendMessage(chatterID, reportError(err, "Retrieving user information via their community URL"));
 								return;
@@ -750,22 +746,17 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								bot.sendMessage(chatterID, "Make sure that you go to the person you want to tip's profile page and right click > Copy Page URL.");
 								return;
 							}
-							console.log(6);
 							Collections.Users.findOne({"id": personToTipID}, function(err: Error, personToTip): void {
-								console.log(7);
 								if (err) {
 									bot.sendMessage(chatterID, reportError(err, "Checking if the tippee is registered"));
 									return;
 								}
 								if (personToTip) {
-									console.log(8);
 									unregisteredUser = false;
 									if (!(/\+nosave/i.test(message))) {
 										// Update the tipper's db entry to include their new favorite
 										user.favorites[personToTipName] = personToTipID;
-										console.log(9);
 										Collections.Users.update({"id": chatterID}, {$set: {"favorites": user.favorites}}, {w:1}, function(err: Error): void {
-											console.log(10);
 											if (err) {
 												bot.sendMessage(chatterID, reportError(err, "Setting user's favorites"));
 												return;
@@ -774,16 +765,13 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 										});
 									}
 									else {
-										console.log(11);
 										continueWithTip();
 									}
 								}
 								else {
-									console.log(12);
 									unregisteredUser = true;
 									// Check the Steam ID against the blacklist
 									Collections.Blacklist.findOne({"id": personToTipID}, function(err: Error, blacklistedUser) {
-										console.log(13);
 										if (err) {
 											bot.sendMessage(chatterID, reportError(err, "Checking user against blacklist"));
 											return;
@@ -795,9 +783,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 										// Invite them to the group and add them to the db
 										//bot.addFriend(personToTipID);
 										inviteToGroup(personToTipID);
-										console.log(14);
 										gamerscoin.getNewAddress(personToTipID, function(err: Error, address: string) {
-											console.log(15);
 											if (err) {
 												bot.sendMessage(chatterID, reportError(err, "Generating address for autoregistered user"));
 												return;
@@ -809,7 +795,6 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 												"favorites": {},
 												"autoregistered": true
 											}, {w:1}, function(err: Error) {
-												console.log(16);
 												if (err) {
 													bot.sendMessage(chatterID, reportError(err, "Autoregistering user in database"));
 													return;
@@ -826,9 +811,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 						continueWithTip();
 					}
 					function continueWithTip(): void {
-						console.log(17);
 						Collections.Users.find({name: personToTipName}).toArray(function(err: Error, possibleUsers: any[]) {
-							console.log(18);
 							if (err) {
 								bot.sendMessage(chatterID, reportError(err, "Retrieving users for +tip"));
 								return;
@@ -872,9 +855,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								"refund": false,
 								"USD": amount * prices["GMC/USD"]
 							};
-							console.log(19);
 							gamerscoin.move(chatterID, personToTipID, amount, 1, stringifyAndEscape(tipComment), function(err: any, success: boolean) {
-								console.log(20);
 								if (err) {
 									err.chatterID = chatterID;
 									err.personToTipID = personToTipID;
@@ -886,7 +867,6 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 								if (/\+verify/i.test(message))
 									bot.sendMessage(GamersTipGroupID, personToTipName + " was tipped " + amount + " Gamerscoins by " + user.name + "!");
 								// Add the tip to the database
-								console.log(21);
 								Collections.Tips.insert({
 									"sender": {
 										"name": tipComment.sender,
@@ -905,7 +885,6 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 									"accepted": !unregisteredUser,
 									"refunded": false
 								}, {w:1}, function(err): void {
-									console.log(22);
 									if (err) {
 										bot.sendMessage(chatterID, reportError(err, "Inserting tip into database"));
 										return;
