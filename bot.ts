@@ -562,7 +562,7 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 		case "+help":
 			var helpMessage: string = 
 				[
-					"Hello there. I'm gamerstippingbot.",
+					"Hello there. I'm TradeBaseTip Bot.",
 					"New to Gamerscoin? Visit the official page: http://www.gamers-coin.org",
 					"",
 					"Commands:",
@@ -950,10 +950,10 @@ bot.on("friendMsg", function(chatterID: string, message: string, type: number): 
 					if (err) {
 						bot.sendMessage(chatterID, reportError(err, "async.parallel in +accept"));
 					}
-					bot.sendMessage(chatterID, "Congrats, your tip of " + tip.amount + " Gamerscoins from " + tip.sender.name + " was accepted! Welcome to GamersTippingBot!");
+					bot.sendMessage(chatterID, "Congrats, your tip of " + tip.amount + " Gamerscoins from " + tip.sender.name + " was accepted! Welcome to Gamerscoin next generation Trade community");
 					bot.sendMessage(chatterID, "You can open up the group chat and double click on my name in the sidebar (with the gold star) to send me commands in the future.");
 					bot.sendMessage(chatterID, "Send '+help' to see all of the available commands.");
-					bot.sendMessage(chatterID, "If you have any questions or suggestions, please start a discussion within the group. RazeTheRoof <petschekr@gmail.com> is this bot's author so send any hate/love mail his way. Remember to pay your tips forward and have fun on your way to the moon!");
+					bot.sendMessage(chatterID, "If you have any questions or suggestions, please start a discussion within the group. RazeTheRoof <petschekr@gmail.com> is this bot's author so send any hate/love mail his way.");
 				});
 			});
 			break;
@@ -1029,9 +1029,11 @@ bot.on("user", function(userInfo): void {
 			if (!user || !tip)
 				return;
 			bot.sendMessage(userInfo.friendid, "Hello " + tip.recipient.name + ", you've been tipped " + tip.amount + " Gamerscoins by " + tip.sender.name);
-			bot.sendMessage(userInfo.friendid, "Gamerscoin is a revolutionary digital currency sent through the internet. You can find out more at http://gamerscoin.com/");
-			bot.sendMessage(userInfo.friendid, "If you would like to accept this tip, please reply with '+accept'.");
+			bot.sendMessage(userInfo.friendid, "Gamerscoin is a 1st Revolutionary digital Gaming currency sent through the internet. You can find out more at http://gamers-coin.org/");
+			bot.sendMessage(userInfo.friendid, "This is your last chance. After this, there is no turning back. You take the Paper Money - the story ends, you wake up in your bed and believe whatever you want to believe.You take the Gamerscoin Train - you stay in Wonderland and I show you how deep the rabbit-hole goes.");			
+                        bot.sendMessage(userInfo.friendid, "If you would like to accept this tip, please reply with '+accept'.");
 			bot.sendMessage(userInfo.friendid, "If you would like to reject this tip and want me to leave you alone, please reply with '+reject'.");
+			bot.sendMessage(userInfo.friendid, "We Love Gaming !!!");
 		});
 	});
 });
